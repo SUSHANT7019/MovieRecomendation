@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - CineSet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/recommendations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ user.username }}!</h1>
+            <p>Your personalized movie recommendation dashboard</p>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🎬</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ total_movies }}</div>
+                    <div class="stat-label">Total Movies</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">❤️</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ favorites_count }}</div>
+                    <div class="stat-label">Favorites</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎭</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ selected_genres_count }}</div>
+                    <div class="stat-label">Preferred Genres</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">✨</div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ recent_recommendations|length }}</div>
+                    <div class="stat-label">Recent Recommendations</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current Preferences -->
+        {% if preferences and preferences.selected_genres %}
+        <div class="dashboard-section">
+            <h2>Your Preference Set</h2>
+            <div class="preference-display">
+                <div class="set-notation-large">
+                    <span class="set-label">P =</span>
+                    <span class="set-bracket">{</span>
+                    {% for genre in preferences.get_genres_list %}
+                        <span class="set-element">{{ genre }}</span>{% if not forloop.last %}<span class="set-comma">,</span>{% endif %}
+                    {% endfor %}
+                    <span class="set-bracket">}</span>
+                </div>
+                <a href="{% url 'preferences' %}" class="btn btn-outline">Edit Preferences</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="dashboard-section alert-info">
+            <h3>⚠️ No Preferences Set</h3>
+            <p>Set your genre preferences to receive personalized recommendations!</p>
+            <a href="{% url 'preferences' %}" class="btn btn-primary">Set Preferences</a>
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="dashboard-section">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{% url 'recommendations' %}" class="action-card">
+                    <div class="action-icon">🎯</div>
+                    <h3>Get Recommendations</h3>
+                    <p>See movies matched to your preferences</p>
+                </a>
+                
+                <a href="{% url 'movie_explorer' %}" class="action-card">
+                    <div class="action-icon">🔍</div>
+                    <h3>Explore Movies</h3>
+                    <p>Browse and filter our collection</p>
+                </a>
+                
+                <a href="{% url 'math_lab' %}" class="action-card">
+                    <div class="action-icon">🧮</div>
+                    <h3>Math Lab</h3>
+                    <p>Interactive Set Theory playground</p>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Recommendations -->
+        {% if recent_recommendations %}
+        <div class="dashboard-section">
+            <h2>Recent Recommendations</h2>
+            <div class="recent-list">
+                {% for history in recent_recommendations %}
+                <div class="recent-item">
+                    <img src="{{ history.movie.poster_url }}" alt="{{ history.movie.title }}" class="recent-poster" onerror="this.src='https://via.placeholder.com/80x120?text=Movie'">
+                    <div class="recent-info">
+                        <h4>{{ history.movie.title }}</h4>
+                        <div class="recent-meta">
+                            <span class="similarity-mini">{{ history.similarity_score }}% match</span>
+                            <span class="rating">⭐ {{ history.movie.rating }}</span>
+                        </div>
+                        <div class="recent-genres">
+                            {{ history.matching_genres }}
+                        </div>
+                    </div>
+                    <a href="{% url 'movie_detail' history.movie.id %}" class="btn btn-small">View</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Favorite Movies -->
+        {% if favorite_movies %}
+        <div class="dashboard-section">
+            <h2>Your Favorites</h2>
+            <div class="favorites-grid">
+                {% for favorite in favorite_movies %}
+                <div class="favorite-card">
+                    <img src="{{ favorite.movie.poster_url }}" alt="{{ favorite.movie.title }}" onerror="this.src='https://via.placeholder.com/150x225?text={{ favorite.movie.title }}'">
+                    <div class="favorite-overlay">
+                        <h4>{{ favorite.movie.title }}</h4>
+                        <a href="{% url 'movie_detail' favorite.movie.id %}" class="btn btn-small">View</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

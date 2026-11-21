@@ -1,0 +1,236 @@
+/* Movie explorer and detail styles */
+
+.explorer-container {
+    padding: 3rem 0;
+    min-height: 80vh;
+}
+
+.explorer-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.explorer-header h1 {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+/* Filters */
+.filters-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-bottom: 3rem;
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-input,
+.filter-select {
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Movie Detail */
+.movie-detail-container {
+    padding: 3rem 0;
+}
+
+.movie-detail-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.detail-poster img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.detail-actions {
+    margin-top: 1.5rem;
+}
+
+.detail-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.detail-title {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.detail-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.meta-item {
+    color: var(--text-muted);
+}
+
+.detail-genres,
+.detail-description,
+.detail-cast {
+    margin-bottom: 2rem;
+}
+
+.detail-genres h3,
+.detail-description h3,
+.detail-cast h3,
+.similarity-analysis h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.genres-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.genre-tag {
+    background: linear-gradient(135deg, rgba(112, 71, 235, 0.1), rgba(57, 135, 255, 0.1));
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.genre-match {
+    background: linear-gradient(135deg, rgba(56, 201, 155, 0.2), rgba(56, 201, 155, 0.1));
+    color: var(--success);
+}
+
+.similarity-analysis {
+    background: linear-gradient(135deg, rgba(112, 71, 235, 0.05), rgba(57, 135, 255, 0.05));
+    padding: 2rem;
+    border-radius: 15px;
+    margin-top: 2rem;
+}
+
+.similarity-score-large {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(112, 71, 235, 0.3);
+}
+
+.score-label {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.matching-info h4 {
+    color: var(--text);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.math-explanation {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+}
+
+.math-explanation p {
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', monospace;
+    color: var(--text);
+}
+
+.no-match {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+}
+
+.detail-back {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* Movie Actions */
+.movie-actions {
+    margin-top: 1rem;
+}
+
+.movie-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .movie-detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filters-form {
+        grid-template-columns: 1fr;
+    }
+}

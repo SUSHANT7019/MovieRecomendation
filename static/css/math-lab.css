@@ -1,0 +1,292 @@
+/* Math Lab styles */
+
+.math-lab-container {
+    padding: 3rem 0;
+    min-height: 80vh;
+}
+
+.math-lab-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.math-lab-header h1 {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.math-lab-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Input Section */
+.lab-input-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.lab-input-section h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.lab-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.lab-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.lab-examples {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border);
+}
+
+.lab-examples h3 {
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.lab-examples button {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Results Section */
+.lab-results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.lab-results-section h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.result-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.operation-symbol {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.result-header h3 {
+    color: var(--text);
+    font-size: 1.2rem;
+}
+
+.result-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: var(--primary);
+    background: rgba(112, 71, 235, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.result-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-count {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--success), #50D8AE);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Jaccard Card */
+.jaccard-card {
+    background: linear-gradient(135deg, rgba(112, 71, 235, 0.1), rgba(57, 135, 255, 0.1));
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.jaccard-card h3 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.jaccard-formula {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.formula-line {
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.formula-calculation {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.jaccard-score {
+    text-align: center;
+}
+
+.score-circle-large {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(112, 71, 235, 0.3);
+}
+
+.jaccard-score p {
+    font-size: 1.2rem;
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* Venn Diagram */
+.venn-diagram-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.venn-diagram-card h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+/* Placeholder */
+.lab-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.placeholder-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+
+.lab-placeholder h3 {
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.lab-placeholder p {
+    color: var(--text-muted);
+}
+
+/* Education Section */
+.lab-education {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.lab-education h2 {
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 2rem;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.edu-card {
+    background: rgba(112, 71, 235, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+.edu-card h4 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.edu-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lab-grid {
+        grid-template-columns: 1fr;
+    }
+}

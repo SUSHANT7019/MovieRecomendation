@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CineSet - Mathematical Movie Recommendations{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'landing' %}" class="logo">
+                <span class="logo-symbol">∩</span>
+                <span class="logo-text">CineSet</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="{% url 'movie_explorer' %}" {% if request.resolver_match.url_name == 'movie_explorer' %}class="active"{% endif %}>Explore</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'recommendations' %}" {% if request.resolver_match.url_name == 'recommendations' %}class="active"{% endif %}>Recommendations</a></li>
+                    <li><a href="{% url 'math_lab' %}" {% if request.resolver_match.url_name == 'math_lab' %}class="active"{% endif %}>Math Lab</a></li>
+                    <li><a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                    <li><a href="{% url 'preferences' %}" {% if request.resolver_match.url_name == 'preferences' %}class="active"{% endif %}>Preferences</a></li>
+                    <li class="user-menu">
+                        <span class="user-name">{{ user.username }}</span>
+                        <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'math_lab' %}" {% if request.resolver_match.url_name == 'math_lab' %}class="active"{% endif %}>Math Lab</a></li>
+                    <li><a href="{% url 'login' %}" class="btn-primary">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="btn-secondary">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">
+            <span>{{ message }}</span>
+            <button class="message-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><span class="logo-symbol">∩</span> CineSet</h3>
+                    <p>Mathematical Movie Recommendations Using Set Theory</p>
+                    <p class="formula">P ∩ M = Personalized Picks</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="{% url 'movie_explorer' %}">Explore Movies</a></li>
+                        <li><a href="{% url 'math_lab' %}">Mathematics Lab</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'recommendations' %}">Get Recommendations</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <p>This platform demonstrates how Set Theory principles from Discrete Mathematics can power intelligent movie recommendations.</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 CineSet. A Discrete Mathematics Project.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

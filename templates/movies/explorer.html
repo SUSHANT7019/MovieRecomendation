@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Explore Movies - CineSet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/movies.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="explorer-container">
+    <div class="container">
+        <div class="explorer-header">
+            <h1>Explore Movies</h1>
+            <p>Browse our collection of {{ movies.count }} movies</p>
+        </div>
+        
+        <!-- Filters -->
+        <div class="filters-section">
+            <form method="get" class="filters-form" id="filtersForm">
+                <div class="filter-group">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        placeholder="Search by title..."
+                        value="{{ search_query }}"
+                        class="filter-input"
+                    >
+                </div>
+                
+                <div class="filter-group">
+                    <select name="genre" class="filter-select">
+                        <option value="">All Genres</option>
+                        {% for genre in all_genres %}
+                        <option value="{{ genre }}" {% if genre_filter == genre %}selected{% endif %}>{{ genre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select name="year" class="filter-select">
+                        <option value="">All Years</option>
+                        {% for year in years %}
+                        <option value="{{ year }}" {% if year_filter == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select name="rating" class="filter-select">
+                        <option value="">All Ratings</option>
+                        <option value="9" {% if rating_filter == "9" %}selected{% endif %}>9.0+</option>
+                        <option value="8" {% if rating_filter == "8" %}selected{% endif %}>8.0+</option>
+                        <option value="7" {% if rating_filter == "7" %}selected{% endif %}>7.0+</option>
+                        <option value="6" {% if rating_filter == "6" %}selected{% endif %}>6.0+</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select name="language" class="filter-select">
+                        <option value="">All Languages</option>
+                        {% for language in languages %}
+                        <option value="{{ language }}" {% if language_filter == language %}selected{% endif %}>{{ language }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="{% url 'movie_explorer' %}" class="btn btn-secondary">Clear</a>
+            </form>
+        </div>
+        
+        <!-- Movies Grid -->
+        {% if movies %}
+        <div class="movies-grid">
+            {% for movie in movies %}
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" onerror="this.src='https://via.placeholder.com/300x450?text={{ movie.title }}'">
+                    <div class="movie-overlay">
+                        <a href="{% url 'movie_detail' movie.id %}" class="btn btn-small">View Details</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">{{ movie.title }}</h3>
+                    <div class="movie-meta">
+                        <span class="year">{{ movie.release_year }}</span>
+                        <span class="rating">⭐ {{ movie.rating }}</span>
+                    </div>
+                    <div class="movie-genres">
+                        {% for genre in movie.get_genres_list|slice:":3" %}
+                        <span class="genre-tag">{{ genre }}</span>
+                        {% endfor %}
+                    </div>
+                    <p class="movie-description">{{ movie.description|truncatewords:20 }}</p>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="movie-actions">
+                        {% if movie.id in favorited_ids %}
+                        <form method="post" action="{% url 'remove_favorite' movie.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-small btn-outline">❤️ Favorited</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'add_favorite' movie.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-small btn-primary">🤍 Add to Favorites</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No movies found matching your filters.</p>
+            <a href="{% url 'movie_explorer' %}" class="btn btn-primary">Clear Filters</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{% static 'js/movies.js' %}"></script>
+{% endblock %}

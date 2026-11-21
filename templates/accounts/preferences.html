@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Genre Preferences - CineSet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/preferences.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="preferences-container">
+    <div class="container">
+        <div class="preferences-header">
+            <h1>Select Your Genre Preferences</h1>
+            <p>Choose the movie genres you enjoy most. These will form your preference set <strong>P</strong></p>
+        </div>
+        
+        {% if selected_genres %}
+        <div class="current-set">
+            <h3>Your Current Preference Set:</h3>
+            <div class="set-display">
+                <span class="set-bracket">{</span>
+                {% for genre in selected_genres %}
+                    <span class="set-element">{{ genre }}</span>{% if not forloop.last %}<span class="set-comma">,</span>{% endif %}
+                {% endfor %}
+                <span class="set-bracket">}</span>
+            </div>
+        </div>
+        {% endif %}
+        
+        <form method="post" class="preferences-form">
+            {% csrf_token %}
+            
+            <div class="genres-grid">
+                {% for genre in available_genres %}
+                <div class="genre-option">
+                    <input 
+                        type="checkbox" 
+                        id="genre-{{ forloop.counter }}" 
+                        name="genres" 
+                        value="{{ genre }}"
+                        {% if genre in selected_genres %}checked{% endif %}
+                    >
+                    <label for="genre-{{ forloop.counter }}" class="genre-label">
+                        <span class="genre-name">{{ genre }}</span>
+                        <span class="checkmark">✓</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="preferences-actions">
+                <button type="submit" class="btn btn-primary btn-large">Save Preferences</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-large">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'js/preferences.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Recommendations - CineSet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/recommendations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="recommendations-container">
+    <div class="container">
+        <div class="recommendations-header">
+            <h1>Your Personalized Recommendations</h1>
+            <p>Based on your preference set: <strong>P = { {% for genre in preferences.get_genres_list %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</strong></p>
+        </div>
+        
+        <div class="recommendations-controls">
+            <a href="{% url 'preferences' %}" class="btn btn-secondary">Edit Preferences</a>
+            {% if exclude_favorites %}
+            <a href="{% url 'recommendations' %}" class="btn btn-outline">Show All</a>
+            {% else %}
+            <a href="?exclude_favorites=true" class="btn btn-outline">Hide Favorited</a>
+            {% endif %}
+        </div>
+        
+        {% if recommendations %}
+        <div class="recommendations-list">
+            {% for rec in recommendations %}
+            <div class="recommendation-card">
+                <div class="rec-poster">
+                    <img src="{{ rec.movie.poster_url }}" alt="{{ rec.movie.title }}" onerror="this.src='https://via.placeholder.com/200x300?text={{ rec.movie.title }}'">
+                    <div class="similarity-badge">{{ rec.similarity_score }}%</div>
+                </div>
+                
+                <div class="rec-content">
+                    <div class="rec-header">
+                        <h3 class="rec-title">{{ rec.movie.title }}</h3>
+                        <div class="rec-meta">
+                            <span class="year">{{ rec.movie.release_year }}</span>
+                            <span class="rating">⭐ {{ rec.movie.rating }}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="rec-description">{{ rec.movie.description|truncatewords:30 }}</p>
+                    
+                    <div class="rec-genres">
+                        {% for genre in rec.movie.get_genres_list %}
+                        <span class="genre-tag {% if genre in rec.matching_genres %}genre-match{% endif %}">
+                            {{ genre }}
+                            {% if genre in rec.matching_genres %}✓{% endif %}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="rec-analysis">
+                        <div class="analysis-summary">
+                            <strong>Match Analysis:</strong>
+                            {% if rec.matching_genres %}
+                                {{ rec.matching_genres|length }} matching genre{{ rec.matching_genres|length|pluralize }}
+                            {% else %}
+                                No matching genres
+                            {% endif %}
+                        </div>
+                        
+                        <button class="btn btn-small btn-outline toggle-math" onclick="toggleMath(this)">
+                            View Mathematical Analysis
+                        </button>
+                        
+                        <div class="math-details" style="display: none;">
+                            <div class="math-box">
+                                <h4>Set Theory Calculation</h4>
+                                <div class="math-line">
+                                    <span class="math-label">Your Preferences (P):</span>
+                                    <span class="math-value">{ {% for genre in rec.user_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                <div class="math-line">
+                                    <span class="math-label">Movie Genres (M):</span>
+                                    <span class="math-value">{ {% for genre in rec.movie_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                <div class="math-line">
+                                    <span class="math-label">Intersection (P ∩ M):</span>
+                                    <span class="math-value">{ {% for genre in rec.matching_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                <div class="math-line">
+                                    <span class="math-label">Union (P ∪ M):</span>
+                                    <span class="math-value">{ {% for genre in rec.all_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                <div class="math-line formula">
+                                    <span class="math-label">Jaccard Similarity:</span>
+                                    <span class="math-value">
+                                        |P ∩ M| / |P ∪ M| = {{ rec.matching_genres|length }} / {{ rec.all_genres|length }} = {{ rec.similarity_score }}%
+                                    </span>
+                                </div>
+                                
+                                {% if rec.missing_genres %}
+                                <div class="math-line">
+                                    <span class="math-label">Missing Preferences (P - M):</span>
+                                    <span class="math-value">{ {% for genre in rec.missing_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if rec.extra_genres %}
+                                <div class="math-line">
+                                    <span class="math-label">Extra Genres (M - P):</span>
+                                    <span class="math-value">{ {% for genre in rec.extra_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="rec-actions">
+                        <a href="{% url 'movie_detail' rec.movie.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No recommendations found. Try adjusting your preferences!</p>
+            <a href="{% url 'preferences' %}" class="btn btn-primary">Update Preferences</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleMath(button) {
+    const mathDetails = button.nextElementSibling;
+    if (mathDetails.style.display === 'none') {
+        mathDetails.style.display = 'block';
+        button.textContent = 'Hide Mathematical Analysis';
+    } else {
+        mathDetails.style.display = 'none';
+        button.textContent = 'View Mathematical Analysis';
+    }
+}
+</script>
+{% endblock %}

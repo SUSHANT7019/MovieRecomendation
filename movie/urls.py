@@ -16,7 +16,34 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from accounts import views as accounts_views
+from movies import views as movies_views
+from recommendations import views as recommendations_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Landing page
+    path('', recommendations_views.landing_view, name='landing'),
+    
+    # Authentication
+    path('accounts/register/', accounts_views.register_view, name='register'),
+    path('accounts/login/', accounts_views.login_view, name='login'),
+    path('accounts/logout/', accounts_views.logout_view, name='logout'),
+    path('accounts/preferences/', accounts_views.preferences_view, name='preferences'),
+    
+    # Movies
+    path('movies/', movies_views.movie_explorer_view, name='movie_explorer'),
+    path('movies/<int:movie_id>/', movies_views.movie_detail_view, name='movie_detail'),
+    
+    # Recommendations
+    path('recommendations/', recommendations_views.recommendations_view, name='recommendations'),
+    path('recommendations/math-lab/', recommendations_views.math_lab_view, name='math_lab'),
+    path('api/math-lab/', recommendations_views.math_lab_api_view, name='math_lab_api'),
+    path('dashboard/', recommendations_views.dashboard_view, name='dashboard'),
+    
+    # Favorites
+    path('favorites/add/<int:movie_id>/', recommendations_views.add_favorite_view, name='add_favorite'),
+    path('favorites/remove/<int:movie_id>/', recommendations_views.remove_favorite_view, name='remove_favorite'),
 ]
+

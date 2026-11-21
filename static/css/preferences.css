@@ -1,0 +1,142 @@
+/* Preferences page styles */
+
+.preferences-container {
+    padding: 3rem 0;
+    min-height: 80vh;
+}
+
+.preferences-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.preferences-header h1 {
+    font-size: 2.5rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.preferences-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.current-set {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.current-set h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.set-display {
+    font-size: 1.5rem;
+    font-family: 'Courier New', monospace;
+    background: rgba(112, 71, 235, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.set-bracket {
+    color: var(--accent);
+    font-size: 2rem;
+    margin: 0 0.5rem;
+}
+
+.set-element {
+    color: var(--primary);
+    font-weight: 600;
+    margin: 0 0.25rem;
+}
+
+.set-comma {
+    color: var(--text-muted);
+}
+
+.preferences-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.genres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.genre-option {
+    position: relative;
+}
+
+.genre-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.genre-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: rgba(112, 71, 235, 0.05);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.genre-label:hover {
+    background: rgba(112, 71, 235, 0.1);
+    transform: translateY(-2px);
+}
+
+.genre-option input[type="checkbox"]:checked + .genre-label {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(112, 71, 235, 0.3);
+}
+
+.genre-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.checkmark {
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.genre-option input[type="checkbox"]:checked + .genre-label .checkmark {
+    opacity: 1;
+}
+
+.preferences-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .genres-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .set-display {
+        font-size: 1rem;
+    }
+}

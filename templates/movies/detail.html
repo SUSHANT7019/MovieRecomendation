@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ movie.title }} - CineSet{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/movies.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="movie-detail-container">
+    <div class="container">
+        <div class="movie-detail-grid">
+            <!-- Poster Section -->
+            <div class="detail-poster">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" onerror="this.src='https://via.placeholder.com/400x600?text={{ movie.title }}'">
+                
+                {% if user.is_authenticated %}
+                <div class="detail-actions">
+                    {% if is_favorited %}
+                    <form method="post" action="{% url 'remove_favorite' movie.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline btn-full">❤️ Remove from Favorites</button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'add_favorite' movie.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-full">🤍 Add to Favorites</button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Details Section -->
+            <div class="detail-content">
+                <h1 class="detail-title">{{ movie.title }}</h1>
+                
+                <div class="detail-meta">
+                    <span class="meta-item"><strong>Year:</strong> {{ movie.release_year }}</span>
+                    <span class="meta-item"><strong>Rating:</strong> ⭐ {{ movie.rating }}/10</span>
+                    <span class="meta-item"><strong>Language:</strong> {{ movie.language }}</span>
+                </div>
+                
+                <div class="detail-genres">
+                    <h3>Genres</h3>
+                    <div class="genres-list">
+                        {% for genre in movie.get_genres_list %}
+                        <span class="genre-tag">{{ genre }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="detail-description">
+                    <h3>Description</h3>
+                    <p>{{ movie.description }}</p>
+                </div>
+                
+                {% if movie.cast %}
+                <div class="detail-cast">
+                    <h3>Cast</h3>
+                    <p>{{ movie.cast }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Similarity Analysis -->
+                {% if user_similarity is not None %}
+                <div class="similarity-analysis">
+                    <h3>Your Match Score</h3>
+                    <div class="similarity-score-large">
+                        <div class="score-circle">{{ user_similarity }}%</div>
+                        <div class="score-label">Preference Match</div>
+                    </div>
+                    
+                    {% if matching_genres %}
+                    <div class="matching-info">
+                        <h4>Matching Genres</h4>
+                        <div class="genres-list">
+                            {% for genre in matching_genres %}
+                            <span class="genre-tag genre-match">{{ genre }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="math-explanation">
+                            <p><strong>Calculation:</strong></p>
+                            <p>Your Preferences (P) = { {% for genre in user_preferences.get_genres_list %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</p>
+                            <p>Movie Genres (M) = { {% for genre in movie.get_genres_list %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</p>
+                            <p>P ∩ M = { {% for genre in matching_genres %}{{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %} }</p>
+                            <p>Jaccard Similarity = {{ user_similarity }}%</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="no-match">This movie doesn't match any of your preferred genres.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="detail-back">
+            <a href="{% url 'movie_explorer' %}" class="btn btn-secondary">← Back to Explorer</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
