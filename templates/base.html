@@ -8,6 +8,8 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/explorer.css' %}">
+
     {% block extra_css %}{% endblock %}
     
     <!-- Chart.js for visualizations -->
@@ -27,7 +29,6 @@
                 
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'recommendations' %}" {% if request.resolver_match.url_name == 'recommendations' %}class="active"{% endif %}>Recommendations</a></li>
-                    <li><a href="{% url 'math_lab' %}" {% if request.resolver_match.url_name == 'math_lab' %}class="active"{% endif %}>Math Lab</a></li>
                     <li><a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
                     <li><a href="{% url 'preferences' %}" {% if request.resolver_match.url_name == 'preferences' %}class="active"{% endif %}>Preferences</a></li>
                     <li class="user-menu">
@@ -35,7 +36,6 @@
                         <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
                     </li>
                 {% else %}
-                    <li><a href="{% url 'math_lab' %}" {% if request.resolver_match.url_name == 'math_lab' %}class="active"{% endif %}>Math Lab</a></li>
                     <li><a href="{% url 'login' %}" class="btn-primary">Login</a></li>
                     <li><a href="{% url 'register' %}" class="btn-secondary">Sign Up</a></li>
                 {% endif %}
@@ -74,7 +74,6 @@
                     <h4>Navigation</h4>
                     <ul>
                         <li><a href="{% url 'movie_explorer' %}">Explore Movies</a></li>
-                        <li><a href="{% url 'math_lab' %}">Mathematics Lab</a></li>
                         {% if user.is_authenticated %}
                             <li><a href="{% url 'recommendations' %}">Get Recommendations</a></li>
                         {% endif %}
@@ -88,7 +87,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 CineSet. A Discrete Mathematics Project.</p>
+                <p>&copy; 2026 CineSet. A Discrete Mathematics Project.</p>
             </div>
         </div>
     </footer>

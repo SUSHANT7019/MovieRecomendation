@@ -116,32 +116,3 @@ def get_recommendations(user, exclude_favorites=False, limit=None):
         recommendations = recommendations[:limit]
     
     return recommendations
-
-
-def calculate_math_lab_operations(set_a_list, set_b_list):
-    """
-    Calculate all set operations for the Math Lab interactive tool.
-    
-    Args:
-        set_a_list: List of elements for set A
-        set_b_list: List of elements for set B
-    
-    Returns:
-        dict with all operations and Jaccard similarity
-    """
-    set_a = set(set_a_list)
-    set_b = set(set_b_list)
-    
-    operations = get_set_operations(set_a, set_b)
-    jaccard = calculate_jaccard_similarity(set_a, set_b)
-    
-    return {
-        'set_a': sorted(list(set_a)),
-        'set_b': sorted(list(set_b)),
-        'union': sorted(list(operations['union'])),
-        'intersection': sorted(list(operations['intersection'])),
-        'difference_a_b': sorted(list(operations['difference_a_b'])),
-        'difference_b_a': sorted(list(operations['difference_b_a'])),
-        'symmetric_difference': sorted(list(operations['symmetric_difference'])),
-        'jaccard_similarity': jaccard,
-    }

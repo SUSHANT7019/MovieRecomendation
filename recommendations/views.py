@@ -6,8 +6,7 @@ from django.views.decorators.http import require_POST
 from .models import Favorite, RecommendationHistory
 from movies.models import Movie
 from accounts.models import UserPreference
-from .engine import get_recommendations, calculate_math_lab_operations
-import json
+from .engine import get_recommendations
 
 
 @login_required
@@ -91,6 +90,16 @@ def add_favorite_view(request, movie_id):
     
     favorite, created = Favorite.objects.get_or_create(user=request.user, movie=movie)
     
+    # Check if AJAX request
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
+    if is_ajax:
+        return JsonResponse({
+            'success': True,
+            'action': 'added',
+            'message': f'{movie.title} added to favorites!' if created else f'{movie.title} is already in your favorites.'
+        })
+    
     if created:
         messages.success(request, f'{movie.title} added to favorites!')
     else:
@@ -106,52 +115,32 @@ def remove_favorite_view(request, movie_id):
     """Remove a movie from favorites"""
     movie = get_object_or_404(Movie, id=movie_id)
     
+    # Check if AJAX request
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
     try:
         favorite = Favorite.objects.get(user=request.user, movie=movie)
         favorite.delete()
-        messages.success(request, f'{movie.title} removed from favorites.')
+        success = True
+        message = f'{movie.title} removed from favorites.'
     except Favorite.DoesNotExist:
-        messages.error(request, 'Movie not in favorites.')
+        success = False
+        message = 'Movie not in favorites.'
+    
+    if is_ajax:
+        return JsonResponse({
+            'success': success,
+            'action': 'removed',
+            'message': message
+        })
+    
+    if success:
+        messages.success(request, message)
+    else:
+        messages.error(request, message)
     
     # Redirect back to the referring page
     return redirect(request.META.get('HTTP_REFERER', 'movie_explorer'))
-
-
-def math_lab_view(request):
-    """Interactive Set Theory mathematics lab"""
-    result = None
-    
-    if request.method == 'POST':
-        set_a_input = request.POST.get('set_a', '').strip()
-        set_b_input = request.POST.get('set_b', '').strip()
-        
-        # Parse inputs (comma-separated)
-        set_a_list = [item.strip() for item in set_a_input.split(',') if item.strip()]
-        set_b_list = [item.strip() for item in set_b_input.split(',') if item.strip()]
-        
-        if set_a_list or set_b_list:
-            result = calculate_math_lab_operations(set_a_list, set_b_list)
-            result['set_a_input'] = set_a_input
-            result['set_b_input'] = set_b_input
-    
-    return render(request, 'recommendations/math_lab.html', {'result': result})
-
-
-def math_lab_api_view(request):
-    """API endpoint for Math Lab calculations (AJAX)"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            set_a_list = data.get('set_a', [])
-            set_b_list = data.get('set_b', [])
-            
-            result = calculate_math_lab_operations(set_a_list, set_b_list)
-            
-            return JsonResponse(result)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
 def landing_view(request):

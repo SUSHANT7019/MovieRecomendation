@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import Movie
 from recommendations.models import Favorite
 from recommendations.engine import calculate_jaccard_similarity
@@ -55,8 +56,14 @@ def movie_explorer_view(request):
     if request.user.is_authenticated:
         favorited_ids = set(Favorite.objects.filter(user=request.user).values_list('movie_id', flat=True))
     
+    # Pagination - 9 movies per page
+    paginator = Paginator(movies, 9)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
     context = {
-        'movies': movies,
+        'movies': page_obj,
+        'page_obj': page_obj,
         'all_genres': all_genres,
         'years': years,
         'languages': languages,

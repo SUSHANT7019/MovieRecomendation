@@ -38,8 +38,6 @@ urlpatterns = [
     
     # Recommendations
     path('recommendations/', recommendations_views.recommendations_view, name='recommendations'),
-    path('recommendations/math-lab/', recommendations_views.math_lab_view, name='math_lab'),
-    path('api/math-lab/', recommendations_views.math_lab_api_view, name='math_lab_api'),
     path('dashboard/', recommendations_views.dashboard_view, name='dashboard'),
     
     # Favorites

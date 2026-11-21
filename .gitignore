@@ -1,0 +1,86 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+*.pot
+
+# Media and Static files
+media/
+staticfiles/
+.static_storage/
+.media/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Translations
+*.mo
+
+# Django stuff
+*.log
+local_settings.py
+
+# Backup files
+*.bak
+*.orig
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secret Key
+secret_key.txt
+
+# Node modules (if any)
+node_modules/
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
