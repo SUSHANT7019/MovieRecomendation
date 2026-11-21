@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Discover Movies - CineSet{% endblock %}
+
+{% block content %}
+<div class="section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h1>Discover Movies</h1>
+            <p class="text-secondary">Browse and search our movie catalog</p>
+        </div>
+        
+        <!-- Search and Filter -->
+        <div class="card mb-4 fade-in">
+            <div class="form-group" style="margin-bottom: 0;">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="form-control" 
+                    placeholder="🔍 Search movies by title..."
+                >
+            </div>
+        </div>
+        
+        <!-- Movies Grid -->
+        <div id="moviesContainer">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading movies...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let allMovies = [];
+
+async function loadMovies() {
+    const container = document.getElementById('moviesContainer');
+    
+    try {
+        const response = await CineSet.apiFetch('/api/movies/?limit=100');
+        allMovies = response.results || response;
+        displayMovies(allMovies);
+    } catch (error) {
+        CineSet.showError(container, error.message);
+    }
+}
+
+function displayMovies(movies) {
+    const container = document.getElementById('moviesContainer');
+    
+    if (movies.length === 0) {
+        container.innerHTML = `
+            <div class="card text-center">
+                <h3>No movies found</h3>
+                <p class="text-secondary">Try a different search</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const moviesHtml = movies.map(movie => 
+        CineSet.createMovieCard(movie)
+    ).join('');
+    
+    container.innerHTML = `
+        <div class="grid grid-5">
+            ${moviesHtml}
+        </div>
+    `;
+}
+
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', CineSet.debounce((e) => {
+    const query = e.target.value.toLowerCase();
+    
+    if (query === '') {
+        displayMovies(allMovies);
+    } else {
+        const filtered = allMovies.filter(movie => 
+            movie.title.toLowerCase().includes(query)
+        );
+        displayMovies(filtered);
+    }
+}, 300));
+
+// Load on page load
+document.addEventListener('DOMContentLoaded', loadMovies);
+</script>
+{% endblock %}

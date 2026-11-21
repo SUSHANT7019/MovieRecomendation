@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}CineSet - Mathematical Movie Recommendations{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a1a1a 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        padding: var(--spacing-xl);
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .hero-buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .features {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .feature-card {
+        text-align: center;
+        padding: var(--spacing-lg);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .feature-title {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .math-section {
+        background-color: var(--background-secondary);
+        padding: var(--spacing-xl) 0;
+        text-align: center;
+    }
+    
+    .math-formula {
+        font-family: 'Courier New', monospace;
+        font-size: 1.25rem;
+        color: var(--secondary-color);
+        padding: var(--spacing-md);
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius-md);
+        margin: var(--spacing-md) auto;
+        max-width: 600px;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content fade-in">
+        <h1 class="hero-title">CineSet</h1>
+        <p class="hero-subtitle">
+            Mathematical Movie Recommendations<br>
+            Powered by Discrete Mathematics & Set Theory
+        </p>
+        <div class="hero-buttons">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary btn-lg">Sign In</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why CineSet?</h2>
+            <p class="text-secondary">A unique recommendation system based on mathematical principles</p>
+        </div>
+        
+        <div class="grid grid-3">
+            <div class="feature-card card">
+                <div class="feature-icon">🧮</div>
+                <h3 class="feature-title">Mathematical Foundation</h3>
+                <p class="text-secondary">
+                    Uses set theory, Jaccard similarity, and discrete mathematics instead of AI/ML algorithms.
+                </p>
+            </div>
+            
+            <div class="feature-card card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">Deterministic Results</h3>
+                <p class="text-secondary">
+                    Same preferences always produce the same results. Fully transparent and verifiable.
+                </p>
+            </div>
+            
+            <div class="feature-card card">
+                <div class="feature-icon">🔬</div>
+                <h3 class="feature-title">Interactive Math Lab</h3>
+                <p class="text-secondary">
+                    Experiment with set operations on real movie data. Learn while you discover.
+                </p>
+            </div>
+            
+            <div class="feature-card card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Union & Intersection</h3>
+                <p class="text-secondary">
+                    Choose OR matching (union) for variety or AND matching (intersection) for precision.
+                </p>
+            </div>
+            
+            <div class="feature-card card">
+                <div class="feature-icon">🚫</div>
+                <h3 class="feature-title">Set Difference</h3>
+                <p class="text-secondary">
+                    Exclude unwanted genres using mathematical set difference operations.
+                </p>
+            </div>
+            
+            <div class="feature-card card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Similarity Scoring</h3>
+                <p class="text-secondary">
+                    Movies ranked by Jaccard similarity coefficient. See exactly how well they match.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mathematical Concepts Section -->
+<section class="math-section">
+    <div class="container">
+        <h2>Powered by Mathematics</h2>
+        <p class="text-secondary mb-4">
+            CineSet implements fundamental concepts from Discrete Mathematics
+        </p>
+        
+        <div class="grid grid-2" style="max-width: 900px; margin: 0 auto;">
+            <div class="card">
+                <h4>Set Operations</h4>
+                <div class="math-formula">
+                    A ∪ B = {x | x ∈ A or x ∈ B}
+                </div>
+                <p class="text-secondary">Union for OR matching</p>
+            </div>
+            
+            <div class="card">
+                <h4>Intersection</h4>
+                <div class="math-formula">
+                    A ∩ B = {x | x ∈ A and x ∈ B}
+                </div>
+                <p class="text-secondary">Intersection for AND matching</p>
+            </div>
+            
+            <div class="card">
+                <h4>Jaccard Similarity</h4>
+                <div class="math-formula">
+                    J(A,B) = |A ∩ B| / |A ∪ B|
+                </div>
+                <p class="text-secondary">Measures preference overlap</p>
+            </div>
+            
+            <div class="card">
+                <h4>De Morgan's Laws</h4>
+                <div class="math-formula">
+                    (A ∪ B)' = A' ∩ B'
+                </div>
+                <p class="text-secondary">Verified on every operation</p>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Start Exploring</a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>How It Works</h2>
+        </div>
+        
+        <div class="grid grid-4">
+            <div class="card text-center">
+                <div style="font-size: 2rem; margin-bottom: var(--spacing-sm);">1️⃣</div>
+                <h4>Select Genres</h4>
+                <p class="text-secondary">Choose your preferred movie genres to form your preference set</p>
+            </div>
+            
+            <div class="card text-center">
+                <div style="font-size: 2rem; margin-bottom: var(--spacing-sm);">2️⃣</div>
+                <h4>Choose Matching</h4>
+                <p class="text-secondary">Pick OR (union) or AND (intersection) matching strategy</p>
+            </div>
+            
+            <div class="card text-center">
+                <div style="font-size: 2rem; margin-bottom: var(--spacing-sm);">3️⃣</div>
+                <h4>Mathematical Engine</h4>
+                <p class="text-secondary">Our engine calculates Jaccard similarity scores</p>
+            </div>
+            
+            <div class="card text-center">
+                <div style="font-size: 2rem; margin-bottom: var(--spacing-sm);">4️⃣</div>
+                <h4>Get Results</h4>
+                <p class="text-secondary">Receive ranked recommendations with explanations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section" style="background-color: var(--background-secondary);">
+    <div class="container text-center">
+        <h2>Ready to Explore?</h2>
+        <p class="text-secondary mb-4">
+            Join CineSet and discover movies through the lens of mathematics
+        </p>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Create Free Account</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,556 @@
+{% extends 'base.html' %}
+
+{% block title %}Mathematical Lab - CineSet{% endblock %}
+
+{% block extra_css %}
+<style>
+    .operation-card {
+        background-color: var(--background-secondary);
+        border: 2px solid var(--border-color);
+        transition: all var(--transition-normal);
+    }
+    
+    .operation-card:hover {
+        border-color: var(--primary-color);
+    }
+    
+    .math-formula {
+        font-family: 'Courier New', monospace;
+        font-size: 1.125rem;
+        color: var(--secondary-color);
+        padding: var(--spacing-sm);
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius-sm);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    .result-box {
+        background-color: var(--background-card);
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+        border-left: 4px solid var(--success-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h1>🧮 Mathematical Lab</h1>
+            <p class="text-secondary">
+                Experiment with set theory operations on real movie data
+            </p>
+        </div>
+        
+        <!-- Operations Grid -->
+        <div class="grid grid-3 fade-in">
+            <!-- Union -->
+            <div class="card operation-card" onclick="showOperation('union')">
+                <h3>Union (∪)</h3>
+                <div class="math-formula">A ∪ B</div>
+                <p class="text-secondary">Combine two or more genre sets</p>
+            </div>
+            
+            <!-- Intersection -->
+            <div class="card operation-card" onclick="showOperation('intersection')">
+                <h3>Intersection (∩)</h3>
+                <div class="math-formula">A ∩ B</div>
+                <p class="text-secondary">Find common movies between genres</p>
+            </div>
+            
+            <!-- Difference -->
+            <div class="card operation-card" onclick="showOperation('difference')">
+                <h3>Set Difference (−)</h3>
+                <div class="math-formula">A − B</div>
+                <p class="text-secondary">Movies in A but not in B</p>
+            </div>
+            
+            <!-- Complement -->
+            <div class="card operation-card" onclick="showOperation('complement')">
+                <h3>Complement (′)</h3>
+                <div class="math-formula">A′</div>
+                <p class="text-secondary">All movies NOT in a genre</p>
+            </div>
+            
+            <!-- Jaccard -->
+            <div class="card operation-card" onclick="showOperation('jaccard')">
+                <h3>Jaccard Similarity</h3>
+                <div class="math-formula">J(A, B)</div>
+                <p class="text-secondary">Measure similarity between genres</p>
+            </div>
+            
+            <!-- De Morgan -->
+            <div class="card operation-card" onclick="showOperation('demorgan')">
+                <h3>De Morgan's Laws</h3>
+                <div class="math-formula">(A ∪ B)′</div>
+                <p class="text-secondary">Verify mathematical laws</p>
+            </div>
+        </div>
+        
+        <!-- Operation Interface -->
+        <div id="operationInterface" class="mt-4" style="display: none;">
+            <div class="card fade-in">
+                <div class="card-header">
+                    <h3 id="operationTitle">Operation</h3>
+                </div>
+                <div class="card-body" id="operationBody">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div id="resultsContainer" class="mt-4"></div>
+    </div>
+</div>
+
+<script>
+let genres = [];
+
+// Load genres
+async function loadGenres() {
+    try {
+        const response = await CineSet.apiFetch('/api/genres/');
+        genres = response.results || response;
+    } catch (error) {
+        console.error('Error loading genres:', error);
+    }
+}
+
+function createGenreSelect(id, label) {
+    const options = genres.map(g => 
+        `<option value="${g.id}">${g.name}</option>`
+    ).join('');
+    
+    return `
+        <div class="form-group">
+            <label for="${id}" class="form-label">${label}</label>
+            <select id="${id}" class="form-control form-select">
+                <option value="">Select genre...</option>
+                ${options}
+            </select>
+        </div>
+    `;
+}
+
+function showOperation(operation) {
+    const interfaceDiv = document.getElementById('operationInterface');
+    const titleEl = document.getElementById('operationTitle');
+    const bodyEl = document.getElementById('operationBody');
+    
+    interfaceDiv.style.display = 'block';
+    document.getElementById('resultsContainer').innerHTML = '';
+    
+    let html = '';
+    let title = '';
+    
+    switch (operation) {
+        case 'union':
+            title = 'Union Operation (A ∪ B)';
+            html = `
+                <div class="math-formula">A ∪ B = {x | x ∈ A or x ∈ B}</div>
+                <p class="text-secondary mb-3">Select multiple genres to combine their movie sets</p>
+                <div id="genreSelectionsUnion"></div>
+                <button onclick="addGenreSelection('union')" class="btn btn-secondary btn-sm mb-3">
+                    + Add Genre
+                </button>
+                <button onclick="executeUnion()" class="btn btn-primary btn-block">
+                    Calculate Union
+                </button>
+            `;
+            setTimeout(() => {
+                document.getElementById('genreSelectionsUnion').innerHTML = createGenreSelect('genre_u_1', 'Genre 1');
+                addGenreSelection('union');
+            }, 100);
+            break;
+            
+        case 'intersection':
+            title = 'Intersection Operation (A ∩ B)';
+            html = `
+                <div class="math-formula">A ∩ B = {x | x ∈ A and x ∈ B}</div>
+                <p class="text-secondary mb-3">Find movies that belong to ALL selected genres</p>
+                <div id="genreSelectionsIntersection"></div>
+                <button onclick="addGenreSelection('intersection')" class="btn btn-secondary btn-sm mb-3">
+                    + Add Genre
+                </button>
+                <button onclick="executeIntersection()" class="btn btn-primary btn-block">
+                    Calculate Intersection
+                </button>
+            `;
+            setTimeout(() => {
+                document.getElementById('genreSelectionsIntersection').innerHTML = createGenreSelect('genre_i_1', 'Genre 1');
+                addGenreSelection('intersection');
+            }, 100);
+            break;
+            
+        case 'difference':
+            title = 'Set Difference (A − B)';
+            html = `
+                <div class="math-formula">A − B = {x | x ∈ A and x ∉ B}</div>
+                <p class="text-secondary mb-3">Movies in the first genre but not in the second</p>
+                ${createGenreSelect('genre_a', 'Set A (subtract from)')}
+                ${createGenreSelect('genre_b', 'Set B (subtract this)')}
+                <button onclick="executeDifference()" class="btn btn-primary btn-block">
+                    Calculate A − B
+                </button>
+            `;
+            break;
+            
+        case 'complement':
+            title = 'Complement Operation (A′)';
+            html = `
+                <div class="math-formula">A′ = U − A = {x ∈ U | x ∉ A}</div>
+                <p class="text-secondary mb-3">All movies that are NOT in the selected genre</p>
+                ${createGenreSelect('genre_c', 'Select Genre')}
+                <button onclick="executeComplement()" class="btn btn-primary btn-block">
+                    Calculate Complement
+                </button>
+            `;
+            break;
+            
+        case 'jaccard':
+            title = 'Jaccard Similarity Coefficient';
+            html = `
+                <div class="math-formula">J(A, B) = |A ∩ B| / |A ∪ B|</div>
+                <p class="text-secondary mb-3">Measure similarity between two genres (0 = disjoint, 1 = identical)</p>
+                ${createGenreSelect('genre_j_a', 'Genre A')}
+                ${createGenreSelect('genre_j_b', 'Genre B')}
+                <button onclick="executeJaccard()" class="btn btn-primary btn-block">
+                    Calculate Similarity
+                </button>
+            `;
+            break;
+            
+        case 'demorgan':
+            title = "De Morgan's Laws Verification";
+            html = `
+                <div class="math-formula">(A ∪ B)′ = A′ ∩ B′</div>
+                <div class="math-formula">(A ∩ B)′ = A′ ∪ B′</div>
+                <p class="text-secondary mb-3">Verify these fundamental laws of set theory</p>
+                ${createGenreSelect('genre_dm_a', 'Genre A')}
+                ${createGenreSelect('genre_dm_b', 'Genre B')}
+                <button onclick="executeDeMorgan()" class="btn btn-primary btn-block">
+                    Verify Laws
+                </button>
+            `;
+            break;
+    }
+    
+    titleEl.textContent = title;
+    bodyEl.innerHTML = html;
+    
+    interfaceDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+let unionCounter = 1;
+let intersectionCounter = 1;
+
+function addGenreSelection(type) {
+    const container = type === 'union' 
+        ? document.getElementById('genreSelectionsUnion')
+        : document.getElementById('genreSelectionsIntersection');
+    
+    const counter = type === 'union' ? ++unionCounter : ++intersectionCounter;
+    const prefix = type === 'union' ? 'genre_u' : 'genre_i';
+    
+    container.insertAdjacentHTML('beforeend', createGenreSelect(`${prefix}_${counter}`, `Genre ${counter}`));
+}
+
+async function executeUnion() {
+    const genreIds = [];
+    for (let i = 1; i <= unionCounter; i++) {
+        const select = document.getElementById(`genre_u_${i}`);
+        if (select && select.value) {
+            genreIds.push(parseInt(select.value));
+        }
+    }
+    
+    if (genreIds.length < 2) {
+        alert('Please select at least 2 genres');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/union/', {
+            method: 'POST',
+            body: JSON.stringify({ genre_ids: genreIds })
+        });
+        
+        displayMathResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+async function executeIntersection() {
+    const genreIds = [];
+    for (let i = 1; i <= intersectionCounter; i++) {
+        const select = document.getElementById(`genre_i_${i}`);
+        if (select && select.value) {
+            genreIds.push(parseInt(select.value));
+        }
+    }
+    
+    if (genreIds.length < 2) {
+        alert('Please select at least 2 genres');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/intersection/', {
+            method: 'POST',
+            body: JSON.stringify({ genre_ids: genreIds })
+        });
+        
+        displayMathResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+async function executeDifference() {
+    const genreA = document.getElementById('genre_a').value;
+    const genreB = document.getElementById('genre_b').value;
+    
+    if (!genreA || !genreB) {
+        alert('Please select both genres');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/difference/', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                genre_a_id: parseInt(genreA),
+                genre_b_id: parseInt(genreB)
+            })
+        });
+        
+        displayMathResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+async function executeComplement() {
+    const genreId = document.getElementById('genre_c').value;
+    
+    if (!genreId) {
+        alert('Please select a genre');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/complement/', {
+            method: 'POST',
+            body: JSON.stringify({ genre_id: parseInt(genreId) })
+        });
+        
+        displayMathResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+async function executeJaccard() {
+    const genreA = document.getElementById('genre_j_a').value;
+    const genreB = document.getElementById('genre_j_b').value;
+    
+    if (!genreA || !genreB) {
+        alert('Please select both genres');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/jaccard/', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                genre_a_id: parseInt(genreA),
+                genre_b_id: parseInt(genreB)
+            })
+        });
+        
+        displayJaccardResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+async function executeDeMorgan() {
+    const genreA = document.getElementById('genre_dm_a').value;
+    const genreB = document.getElementById('genre_dm_b').value;
+    
+    if (!genreA || !genreB) {
+        alert('Please select both genres');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('resultsContainer');
+    CineSet.showLoading(resultsContainer);
+    
+    try {
+        const result = await CineSet.apiFetch('/api/math/verify-de-morgan/', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                genre_a_id: parseInt(genreA),
+                genre_b_id: parseInt(genreB)
+            })
+        });
+        
+        displayDeMorganResult(result);
+    } catch (error) {
+        CineSet.showError(resultsContainer, error.message);
+    }
+}
+
+function displayMathResult(result) {
+    const container = document.getElementById('resultsContainer');
+    
+    const movies = result.result.movies || [];
+    const movieList = movies.slice(0, 10).map(m => m.title).join(', ');
+    const moreCount = movies.length - 10;
+    
+    container.innerHTML = `
+        <div class="card result-box fade-in">
+            <h3>Result</h3>
+            <div class="math-formula">${result.formula}</div>
+            
+            <div class="mt-3">
+                <strong>Cardinality:</strong> 
+                <span style="font-size: 1.5rem; color: var(--primary-color);">
+                    |Result| = ${result.result.cardinality}
+                </span>
+            </div>
+            
+            ${result.result.explanation ? `
+                <div class="mt-2">
+                    <p class="text-secondary">${result.result.explanation}</p>
+                </div>
+            ` : ''}
+            
+            ${movies.length > 0 ? `
+                <div class="mt-3">
+                    <strong>Sample Movies:</strong>
+                    <p class="text-secondary">${movieList}${moreCount > 0 ? `, and ${moreCount} more...` : ''}</p>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+function displayJaccardResult(result) {
+    const container = document.getElementById('resultsContainer');
+    
+    container.innerHTML = `
+        <div class="card result-box fade-in">
+            <h3>Jaccard Similarity Result</h3>
+            <div class="math-formula">${result.formula}</div>
+            
+            <div class="grid grid-3 mt-3">
+                <div>
+                    <strong>${result.set_a.genre}</strong>
+                    <div style="font-size: 1.5rem; color: var(--text-secondary);">
+                        ${result.set_a.cardinality} movies
+                    </div>
+                </div>
+                <div>
+                    <strong>${result.set_b.genre}</strong>
+                    <div style="font-size: 1.5rem; color: var(--text-secondary);">
+                        ${result.set_b.cardinality} movies
+                    </div>
+                </div>
+                <div>
+                    <strong>Similarity</strong>
+                    <div style="font-size: 2rem; color: var(--secondary-color);">
+                        ${result.similarity_percentage}%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <p><strong>Intersection:</strong> ${result.intersection.cardinality} movies</p>
+                <p><strong>Union:</strong> ${result.union.cardinality} movies</p>
+            </div>
+            
+            <div class="mt-3" style="background-color: var(--background-secondary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                <p class="text-secondary" style="margin: 0;">
+                    ${result.explanation}
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+function displayDeMorganResult(result) {
+    const container = document.getElementById('resultsContainer');
+    
+    const law1Status = result.law1.holds ? '✅ VERIFIED' : '❌ FAILED';
+    const law2Status = result.law2.holds ? '✅ VERIFIED' : '❌ FAILED';
+    
+    container.innerHTML = `
+        <div class="card result-box fade-in">
+            <h3>De Morgan's Laws Verification</h3>
+            
+            <div class="mt-3">
+                <h4>Law 1: ${result.law1.statement}</h4>
+                <div class="math-formula">${result.law1.statement}</div>
+                <div style="display: flex; justify-content: space-between; margin-top: var(--spacing-sm);">
+                    <div>
+                        <strong>Left Side:</strong> ${result.law1.left_cardinality} elements
+                    </div>
+                    <div>
+                        <strong>Right Side:</strong> ${result.law1.right_cardinality} elements
+                    </div>
+                    <div style="font-size: 1.5rem;">
+                        ${law1Status}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <h4>Law 2: ${result.law2.statement}</h4>
+                <div class="math-formula">${result.law2.statement}</div>
+                <div style="display: flex; justify-content: space-between; margin-top: var(--spacing-sm);">
+                    <div>
+                        <strong>Left Side:</strong> ${result.law2.left_cardinality} elements
+                    </div>
+                    <div>
+                        <strong>Right Side:</strong> ${result.law2.right_cardinality} elements
+                    </div>
+                    <div style="font-size: 1.5rem;">
+                        ${law2Status}
+                    </div>
+                </div>
+            </div>
+            
+            ${result.both_laws_verified ? `
+                <div class="mt-3 text-center" style="background-color: rgba(40, 167, 69, 0.1); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                    <h3 style="color: var(--success-color); margin: 0;">
+                        ✅ Both De Morgan's Laws Verified!
+                    </h3>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Load genres on page load
+document.addEventListener('DOMContentLoaded', loadGenres);
+</script>
+{% endblock %}

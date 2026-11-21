@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}History - CineSet{% endblock %}
+
+{% block content %}
+<div class="section">
+    <div class="container">
+        <div class="section-header fade-in">
+            <h1>Recommendation History</h1>
+            <p class="text-secondary">Your past movie recommendations</p>
+        </div>
+        
+        <div id="historyContainer">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading history...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadHistory() {
+    const container = document.getElementById('historyContainer');
+    
+    try {
+        const response = await CineSet.apiFetch('/api/recommendations/history/');
+        displayHistory(response.results || []);
+    } catch (error) {
+        CineSet.showError(container, error.message);
+    }
+}
+
+function displayHistory(history) {
+    const container = document.getElementById('historyContainer');
+    
+    if (history.length === 0) {
+        container.innerHTML = `
+            <div class="card text-center">
+                <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">📭</div>
+                <h3>No History Yet</h3>
+                <p class="text-secondary">
+                    Start generating recommendations to build your history
+                </p>
+                <a href="{% url 'recommendations' %}" class="btn btn-primary mt-3">
+                    Get Recommendations
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    const historyHtml = history.map((item, index) => {
+        const movie = item.movie;
+        const date = new Date(item.created_at).toLocaleDateString();
+        
+        return `
+            <div class="card fade-in" style="animation-delay: ${index * 0.05}s;">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: var(--spacing-md);">
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: var(--spacing-xs);">${movie.title}</h3>
+                        <p class="text-secondary" style="margin-bottom: var(--spacing-sm);">
+                            ${movie.release_year || 'Unknown year'}
+                        </p>
+                        <div class="movie-genres">
+                            ${movie.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}
+                        </div>
+                        <p class="text-secondary mt-2" style="font-size: 0.875rem;">
+                            ${item.explanation}
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-color);">
+                            ${item.similarity_percentage}%
+                        </div>
+                        <div class="text-muted" style="font-size: 0.875rem;">
+                            ${date}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = historyHtml;
+}
+
+document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+{% endblock %}
